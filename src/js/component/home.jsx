@@ -1,25 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
-
-//create your first component
 const Home = () => {
+	const [toDoList, setToDoList] = useState([]);
+	const [newToDo, setNewToDo] = useState("");
+	const [showButton, setShowButton] = useState(false);
+
+	const handleKeyDown = (e) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			setToDoList([...toDoList, newToDo]);
+			setNewToDo("");
+		}
+	};
+
+	const handleChange = (e) => {
+		setNewToDo(e.target.value);
+	};
+
+	const handleInputClick = () => {
+		setShowButton(true);
+	};
+
+	const deleteToDo = (index) => {
+		const updatedList = [...toDoList];
+		updatedList.splice(index, 1);
+		setToDoList(updatedList);
+	};
+
+	let message;
+	if (toDoList.length === 0) {
+		message = "No hay ninguna tarea...";
+	} else {
+		message = "Puedes agregar más tareas...";
+	}
+
+	let toDos = toDoList.length;
+
 	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
-		</div>
+		<>
+			<h3 className="header text-center">To Do's List</h3>
+			<div className="container-fluid">
+				<div className="toDoBase">
+					<input
+						className="toDoInput form-control"
+						type="text"
+						placeholder={message}
+						value={newToDo}
+						onChange={handleChange}
+						onKeyDown={handleKeyDown}
+					/>
+
+					{toDoList.map((toDo, index) => (
+						<div key={index} className="toDoItem">
+							<div className=" inputWithButton">
+								<input
+									className="toDoInput form-control"
+									type="text"
+									value={toDo}
+									readOnly
+									onClick={handleInputClick}
+								/>
+
+								{showButton && (
+									<button
+										className="closeButton"
+										onClick={() => deleteToDo(index)}
+									>
+										<FontAwesomeIcon icon={faTimes} />
+									</button>
+								)}
+							</div>
+						</div>
+
+					))}
+				<p className="toDosCounter">Tienes {toDos} pendientes</p>
+				</div>
+
+			</div>
+
+		</>
 	);
 };
 
